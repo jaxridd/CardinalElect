@@ -1,0 +1,20 @@
+# Frontend
+frontend/cardinalelect/node_modules
+frontend/cardinalelect/dist
+
+# Backend
+backend/node_modules
+backend/target
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode
+.idea
