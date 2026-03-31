@@ -1,15 +1,20 @@
+# Backend
+backend/cardinalelect/venv
+backend/cardinalelect/__pycache__
+backend/cardinalelect/app/__pycache__
+backend/cardinalelect/app/routes/__pycache__
+backend/cardinalelect/app/middleware/__pycache__
+backend/cardinalelect/app/db/__pycache__
+backend/cardinalelect/app/utils/__pycache__
+backend/.env
+
 # Frontend
 frontend/cardinalelect/node_modules
 frontend/cardinalelect/dist
 
-# Backend
-backend/node_modules
-backend/target
-
-# Environment variables
+# Environment
 .env
 .env.local
-.env.production
 
 # OS
 .DS_Store
