@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { api } from "../api";
 
 function VerifyIdentity() {
   const navigate = useNavigate();
@@ -9,22 +10,38 @@ function VerifyIdentity() {
     department: "",
     email: "",
   });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (
       !formData.name ||
       !formData.lNumber ||
       !formData.department ||
       !formData.email
     ) {
-      alert("Please fill in all fields");
+      setError("Please fill in all fields");
       return;
     }
-    navigate("/verify-code");
+    setLoading(true);
+    setError("");
+    try {
+      await api.post("/api/elections/1/verify/request", {
+        full_name: formData.name,
+        l_number: formData.lNumber,
+        department: formData.department,
+        email: formData.email,
+      });
+      navigate("/verify-code", { state: { email: formData.email } });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -34,6 +51,7 @@ function VerifyIdentity() {
         <p className="text-gray-500 text-sm">
           Enter your information to receive a verification code
         </p>
+        {error && <p className="text-red-500 text-sm">{error}</p>}
         <input
           className="border rounded-lg p-3 text-sm"
           type="text"
@@ -62,15 +80,16 @@ function VerifyIdentity() {
           className="border rounded-lg p-3 text-sm"
           type="email"
           name="email"
-          placeholder="Lamar University Email"
+          placeholder="Email"
           value={formData.email}
           onChange={handleChange}
         />
         <button
           onClick={handleSubmit}
-          className="w-full bg-red-700 text-white py-3 rounded-lg font-semibold hover:bg-red-800 transition"
+          disabled={loading}
+          className="w-full bg-red-700 text-white py-3 rounded-lg font-semibold hover:bg-red-800 transition disabled:opacity-50"
         >
-          Send Verification Code
+          {loading ? "Sending..." : "Send Verification Code"}
         </button>
       </div>
     </div>
