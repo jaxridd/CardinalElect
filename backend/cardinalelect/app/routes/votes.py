@@ -66,14 +66,14 @@ async def my_votes(election_id: int, voter=Depends(require_voter)):
     )
     return [dict(r) for r in rows]
 
-@router.post("/test-vote")
+""" @router.post("/test-vote")
 async def test_vote(body: VoteCast):
-    """Temporary test route - no auth required"""
+    # Temporary test route - no auth required
     pool = get_pool()
     try:
         row = await pool.fetchrow(
-            """INSERT INTO votes (election_id, position_id, candidate_id, voter_email)
-               VALUES ($1, $2, $3, $4) RETURNING vote_id, voted_at""",
+            # INSERT INTO votes (election_id, position_id, candidate_id, voter_email)
+               # VALUES ($1, $2, $3, $4) RETURNING vote_id, voted_at,
             body.election_id, body.position_id, body.candidate_id, "test@lamar.edu",
         )
         return {
@@ -82,14 +82,14 @@ async def test_vote(body: VoteCast):
             "voted_at": row["voted_at"],
         }
     except Exception as e:
-        return {"error": str(e)}
+        return {"error": str(e)} """
 
-@router.post("/verify-token")
+"""@router.post("/verify-token")
 async def verify_token(data: dict):
-    """Temporary - tests if a token is valid"""
+    # Temporary - tests if a token is valid
     from app.middleware.auth import _decode
     try:
         payload = _decode(data["token"])
         return {"valid": True, "payload": payload}
     except Exception as e:
-        return {"valid": False, "error": str(e)}
+        return {"valid": False, "error": str(e)}"""

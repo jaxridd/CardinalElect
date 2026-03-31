@@ -39,12 +39,12 @@ class VerifyRequest(BaseModel):
     l_number: str
     email: EmailStr
 
-    @field_validator("email")
+    """ @field_validator("email")
     @classmethod
     def must_be_lamar_email(cls, v):
         if not v.lower().endswith("@lamar.edu"):
             raise ValueError("Must use a valid Lamar University email (@lamar.edu)")
-        return v
+        return v """
 
 class VerifyConfirm(BaseModel):
     email: EmailStr
