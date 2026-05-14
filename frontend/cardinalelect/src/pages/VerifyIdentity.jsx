@@ -30,12 +30,15 @@ function VerifyIdentity() {
     setLoading(true);
     setError("");
     try {
-      await api.post("/api/elections/1/verify/request", {
-        full_name: formData.name,
-        l_number: formData.lNumber,
-        department: formData.department,
-        email: formData.email,
-      });
+      await api.post(
+        `/api/elections/${localStorage.getItem("electionId")}/verify/request`,
+        {
+          full_name: formData.name,
+          l_number: formData.lNumber,
+          department: formData.department,
+          email: formData.email,
+        },
+      );
       navigate("/verify-code", { state: { email: formData.email } });
     } catch (err) {
       setError(err.message);

@@ -12,22 +12,24 @@ function Candidates() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    api.get('/api/elections/1')
-      .then(data => {
+    api
+      .get(`/api/elections/${localStorage.getItem("electionId")}`)
+      .then((data) => {
         const parsed = {
           ...data,
-          positions: data.positions.map(p => ({
+          positions: data.positions.map((p) => ({
             ...p,
-            candidates: typeof p.candidates === 'string' 
-              ? JSON.parse(p.candidates) 
-              : p.candidates
-          }))
-        }
-        setElection(parsed)
+            candidates:
+              typeof p.candidates === "string"
+                ? JSON.parse(p.candidates)
+                : p.candidates,
+          })),
+        };
+        setElection(parsed);
       })
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false))
-  }, [])
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
 
   const handleVote = (positionId, candidateId) => {
     setVotes({ ...votes, [positionId]: candidateId });
@@ -48,7 +50,7 @@ function Candidates() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            election_id: 1,
+            election_id: parseInt(localStorage.getItem("electionId")),
             position_id: parseInt(positionId),
             candidate_id: candidateId,
           }),

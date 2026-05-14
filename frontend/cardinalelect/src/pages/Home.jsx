@@ -23,6 +23,12 @@ function Home() {
           >
             Admin Login
           </button>
+          <button
+            onClick={() => navigate("/results")}
+            className="w-full border border-gray-400 text-gray-600 py-3 rounded-lg font-semibold hover:bg-gray-50 transition"
+          >
+            View Results
+          </button>
         </div>
       </div>
     </div>
