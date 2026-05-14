@@ -5,6 +5,7 @@ import VerifyCode from './pages/VerifyCode'
 import Candidates from './pages/Candidates'
 import AdminCreateElection from './pages/AdminCreateElection'
 import AdminUploadCandidates from './pages/AdminUploadCandidates'
+import AdminLogin from './pages/AdminLogin'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/candidates" element={<Candidates />} />
         <Route path="/admin/create-election" element={<AdminCreateElection />} />
         <Route path="/admin/upload-candidates" element={<AdminUploadCandidates />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
       </Routes>
     </BrowserRouter>
   )

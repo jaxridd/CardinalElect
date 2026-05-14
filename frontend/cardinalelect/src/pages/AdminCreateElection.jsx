@@ -9,6 +9,8 @@ function AdminCreateElection() {
     endDate: "",
   });
   const [positions, setPositions] = useState([""]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleElectionChange = (e) => {
     setElection({ ...election, [e.target.name]: e.target.value });
@@ -24,22 +26,84 @@ function AdminCreateElection() {
     setPositions([...positions, ""]);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!election.name || !election.startDate || !election.endDate) {
-      alert("Please fill in all election details");
+      setError("Please fill in all election details");
       return;
     }
     if (positions.some((p) => p === "")) {
-      alert("Please fill in all position names");
+      setError("Please fill in all position names");
       return;
     }
-    navigate("/admin/upload-candidates");
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const token = localStorage.getItem("adminToken");
+
+      // Step 1: Create the election
+      const electionRes = await fetch("http://localhost:8000/api/elections/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title: election.name,
+          description: "",
+          start_time: new Date(election.startDate).toISOString(),
+          end_time: new Date(election.endDate).toISOString(),
+        }),
+      });
+
+      if (!electionRes.ok) {
+        const err = await electionRes.json();
+        throw new Error(err.detail || "Failed to create election");
+      }
+
+      const electionData = await electionRes.json();
+      const electionId = electionData.election_id;
+      localStorage.setItem("electionId", electionId);
+
+      // Step 2: Create each position
+      const positionIds = [];
+      for (const title of positions) {
+        const posRes = await fetch(
+          `http://localhost:8000/api/elections/${electionId}/positions`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ title, description: "" }),
+          }
+        );
+
+        if (!posRes.ok) {
+          const err = await posRes.json();
+          throw new Error(err.detail || "Failed to create position");
+        }
+
+        const posData = await posRes.json();
+        positionIds.push({ id: posData.position_id, title });
+      }
+
+      localStorage.setItem("positionIds", JSON.stringify(positionIds));
+      navigate("/admin/upload-candidates");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
       <div className="bg-white rounded-2xl shadow-md p-10 flex flex-col gap-4 w-full max-w-md">
         <h1 className="text-2xl font-bold text-red-700">Create Election</h1>
+        {error && <p className="text-red-500 text-sm">{error}</p>}
         <input
           className="border rounded-lg p-3 text-sm"
           type="text"
@@ -87,9 +151,10 @@ function AdminCreateElection() {
         </button>
         <button
           onClick={handleSubmit}
-          className="w-full bg-red-700 text-white py-3 rounded-lg font-semibold hover:bg-red-800 transition"
+          disabled={loading}
+          className="w-full bg-red-700 text-white py-3 rounded-lg font-semibold hover:bg-red-800 transition disabled:opacity-50"
         >
-          Create Election
+          {loading ? "Creating..." : "Create Election"}
         </button>
       </div>
     </div>
